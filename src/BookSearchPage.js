@@ -44,7 +44,6 @@ class BookSearchPage extends Component {
                     <ol className="books-grid">
                         {
                             this.state.searchResults.map((book) => {
-                                book.shelf = "none";
                                 return <li key={ book.id }> <Book book={ book } onBookShelfChangeSubmit={ this.props.onBookShelfChangeSubmit } /> </li>;
                             })
                         }
