@@ -29,14 +29,17 @@ class BooksApp extends React.Component {
 
   onBookShelfChangeSubmit = (b, newShelf) => {
     this.setState((prevState) => {
-      // if b is not in our app yet
+
+      b.shelf = newShelf;
       if (prevState.books.filter((book) => book.id === b.id).length === 0) {
+        // if b is not in our app yet, clone one to our app repo
         let clone = JSON.parse(JSON.stringify(b));
         clone.shelf = newShelf;
         return { books : prevState.books.concat(clone) };
       }
       else
         return {
+        // if b is in our app, change the entry
           books : prevState.books.map((book) => {
             if ( book.id === b.id ) book.shelf = newShelf;
             return book;

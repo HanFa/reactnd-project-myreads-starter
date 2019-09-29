@@ -9,13 +9,18 @@ class Book extends Component {
     };
 
     render() {
+        let thumblink = this.props.book.imageLinks !== undefined
+            ? `url("${this.props.book.imageLinks.thumbnail}"` : null;
+
+        let bookCoverStyle = {
+            width: 128, height: 188,
+            backgroundImage: thumblink
+        };
+
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{
-                        width: 128, height: 188,
-                        backgroundImage: `url("${this.props.book.imageLinks.thumbnail}"` }}>
-                    </div>
+                    <div className="book-cover" style={ bookCoverStyle }> </div>
 
                     <div className="book-shelf-changer">
                         <select onChange={ (event) => this.props.onBookShelfChangeSubmit(this.props.book, event.target.value) } value= {
