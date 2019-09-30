@@ -14,7 +14,6 @@ class BookSearchPage extends Component {
 
 
     render() {
-        console.log(this.props.searchResults)
         return (
             <div className="search-books">
                 <div className="search-books-bar">

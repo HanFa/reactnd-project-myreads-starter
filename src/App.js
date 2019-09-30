@@ -60,6 +60,7 @@ class BooksApp extends React.Component {
       books.map((book) => {
         let matchBook = this.state.books.filter((b) => b.id === book.id)
         book.shelf = (matchBook.length > 0) ? matchBook[0].shelf : 'none'
+        return book
       })
       this.setState( { searchResults: books } )
     })
