@@ -5,6 +5,8 @@ import Book from './Book'
 import BookSearchPage from "./BookSearchPage";
 import BookListPage from "./BookListPage";
 import { BrowserRouter, Route } from "react-router-dom";
+import {update} from "./BooksAPI"
+import {search} from "./BooksAPI"
 
 
 class BooksApp extends React.Component {
@@ -16,6 +18,7 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     books: [],
+    searchResults: [],
     showSearchPage: false
   };
 
@@ -29,30 +32,46 @@ class BooksApp extends React.Component {
 
   onBookShelfChangeSubmit = (b, newShelf) => {
     this.setState((prevState) => {
-
-      b.shelf = newShelf;
+      b.shelf = newShelf
+      update(b, newShelf)
       if (prevState.books.filter((book) => book.id === b.id).length === 0) {
         // if b is not in our app yet, clone one to our app repo
-        let clone = JSON.parse(JSON.stringify(b));
-        clone.shelf = newShelf;
-        return { books : prevState.books.concat(clone) };
+        return { books : prevState.books.concat(b) }
       }
       else
         return {
         // if b is in our app, change the entry
           books : prevState.books.map((book) => {
-            if ( book.id === b.id ) book.shelf = newShelf;
+            if ( book.id === b.id ) book.shelf = newShelf
             return book;
           })
-        };
+        }
     })
-  };
+  }
+
+  onSearchChange = (val) => {
+    if (val === "") {
+      this.setState( { searchResults : [] } )
+      return
+    }
+    search(val).then((books) => {
+      // for each book searched, figure out which shelf it is on
+      books.map((book) => {
+        let matchBook = this.state.books.filter((b) => b.id === book.id)
+        book.shelf = (matchBook.length > 0) ? matchBook[0].shelf : 'none'
+      })
+
+      this.setState( { searchResults: books.length === undefined ? [] : books } )
+    })
+  }
 
   getFilteredBook = ( bookShelf ) => {
       return this.state.books.filter(( book ) =>  {
         return book.shelf === bookShelf;
       }).map((book) => {
-        return (<li key={ book.id }> <Book book={ book } onBookShelfChangeSubmit={ this.onBookShelfChangeSubmit } /> </li>)
+        return <li key={ book.id }>
+          <Book book={ book } onBookShelfChangeSubmit={ this.onBookShelfChangeSubmit } />
+        </li>
       })
   };
 
@@ -61,8 +80,12 @@ class BooksApp extends React.Component {
       <BrowserRouter>
         <div className="app">
 
-          <Route path="/search" render={ () => { return (<BookSearchPage onBookShelfChangeSubmit={ this.onBookShelfChangeSubmit } />) }} />
-          <Route exact path="/" render={ () => { return (<BookListPage getFilteredBook={ this.getFilteredBook }/>) }} />
+          <Route path="/search" render={ () => <BookSearchPage searchResults={ this.state.searchResults }
+                                                         onSearchChange={ this.onSearchChange }
+                                                         onBookShelfChangeSubmit={ this.onBookShelfChangeSubmit } />
+          }/>
+
+          <Route exact path="/" render={ () => <BookListPage getFilteredBook={ this.getFilteredBook }/> } />
 
         </div>
       </BrowserRouter>

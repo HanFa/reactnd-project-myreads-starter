@@ -1,25 +1,16 @@
 import React, { Component } from 'react'
-import {search} from "./BooksAPI";
+import PropTypes from 'prop-types';
 import Book from "./Book";
 import { Link } from "react-router-dom";
 
 
 class BookSearchPage extends Component {
 
-    state = {
-        searchResults: []
-    };
-
-    onSearchChange = (val) => {
-        if (val === "") {
-            this.setState( { searchResults : [] } );
-            return;
-        }
-        search(val).then((books) => {
-            this.setState( { searchResults: books.length === undefined ? [] : books } )
-        })
-
-    };
+    static defaultProps = {
+        searchResults: PropTypes.array.required,
+        onBookShelfChangeSubmit: PropTypes.func.required,
+        onSearchChange: PropTypes.func.required
+    }
 
 
     render() {
@@ -36,16 +27,16 @@ class BookSearchPage extends Component {
                           However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                           you don't find a specific author or title. Every search is limited by search terms.
                         */
-                        }
-                        <input type="text" placeholder="Search by title or author" onInput={ (event) => { this.onSearchChange(event.target.value) }}/>
+                    }
+                        <input type="text" placeholder="Search by title or author" onInput={ (event) => { this.props.onSearchChange(event.target.value) }}/>
                     </div>
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
                         {
-                            this.state.searchResults.map((book) => {
-                                return <li key={ book.id }> <Book book={ book } onBookShelfChangeSubmit={ this.props.onBookShelfChangeSubmit } /> </li>;
-                            })
+                            this.props.searchResults.map((book) =>
+                                <li key={ book.id }> <Book book={ book } onBookShelfChangeSubmit={ this.props.onBookShelfChangeSubmit } /> </li>
+                            )
                         }
                     </ol>
                 </div>
