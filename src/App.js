@@ -56,12 +56,12 @@ class BooksApp extends React.Component {
     }
     search(val).then((books) => {
       // for each book searched, figure out which shelf it is on
+      books = books.length === undefined ? [] : books
       books.map((book) => {
         let matchBook = this.state.books.filter((b) => b.id === book.id)
         book.shelf = (matchBook.length > 0) ? matchBook[0].shelf : 'none'
       })
-
-      this.setState( { searchResults: books.length === undefined ? [] : books } )
+      this.setState( { searchResults: books } )
     })
   }
 

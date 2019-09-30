@@ -14,6 +14,7 @@ class BookSearchPage extends Component {
 
 
     render() {
+        console.log(this.props.searchResults)
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -39,6 +40,7 @@ class BookSearchPage extends Component {
                             )
                         }
                     </ol>
+                    { this.props.searchResults.length === 0 && <h1 className="book-title"> No matched book </h1> }
                 </div>
             </div>
         );
